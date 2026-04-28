@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,12 +12,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Productos {
+@Builder
+public class Producto {
     @Id
     private String id;
-    private String nombreProducto;
+    private String nombre;
     private String descripcion;
     private double precio;
     private int stock;
-
+    private String categoria;
+    @Builder.Default
+    private boolean activo = true;
 }
