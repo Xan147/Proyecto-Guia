@@ -2,20 +2,19 @@ package com.project.shop.Services;
 
 import java.util.List;
 
-import com.project.shop.Dtos.UsuarioRequestDTO;
-import com.project.shop.Dtos.UsuarioResponseDTO;
+import com.project.shop.Dtos.UsuarioDTO;
 
 public interface UsuarioService {
 
-    UsuarioResponseDTO crear(UsuarioRequestDTO dto);
+    UsuarioDTO crear(UsuarioDTO dto);
 
-    UsuarioResponseDTO buscarPorId(String id);
+    UsuarioDTO buscarPorId(String id);
 
-    UsuarioResponseDTO buscarPorEmail(String email);
+    UsuarioDTO buscarPorEmail(String email);
 
-    List<UsuarioResponseDTO> listarTodos();
+    List<UsuarioDTO> listarTodos();
 
-    UsuarioResponseDTO actualizar(String id, UsuarioRequestDTO dto);
+    UsuarioDTO actualizar(String id, UsuarioDTO dto);
 
     void eliminar(String id);
 }

@@ -4,8 +4,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.project.shop.Dtos.UsuarioRequestDTO;
-import com.project.shop.Dtos.UsuarioResponseDTO;
+import com.project.shop.Dtos.UsuarioDTO;
 import com.project.shop.Models.Roles;
 import com.project.shop.Models.Usuario;
 
@@ -13,7 +12,7 @@ import com.project.shop.Models.Usuario;
 public class UsuarioMapperImpl implements UsuarioMapper {
 
     @Override
-    public Usuario toUsuario(UsuarioRequestDTO dto) {
+    public Usuario toUsuario(UsuarioDTO dto) {
         if (dto == null) return null;
 
         return Usuario.builder()
@@ -26,15 +25,15 @@ public class UsuarioMapperImpl implements UsuarioMapper {
     }
 
     @Override
-    public UsuarioResponseDTO toUsuarioDto(Usuario usuario) {
+    public UsuarioDTO toUsuarioDto(Usuario usuario) {
         if (usuario == null) return null;
 
-        UsuarioResponseDTO response = new UsuarioResponseDTO();
-        response.setId(usuario.getId());
-        response.setNombre(usuario.getNombre());
-        response.setEmail(usuario.getEmail());
-        response.setTelefono(usuario.getTelefono());
-        response.setRoles(usuario.getRoles());
-        return response;
+        return UsuarioDTO.builder()
+                .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .email(usuario.getEmail())
+                .telefono(usuario.getTelefono())
+                .roles(usuario.getRoles())
+                .build();
     }
 }

@@ -6,8 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.project.shop.Dtos.UsuarioRequestDTO;
-import com.project.shop.Dtos.UsuarioResponseDTO;
+import com.project.shop.Dtos.UsuarioDTO;
 import com.project.shop.Mapper.UsuarioMapper;
 import com.project.shop.Models.Usuario;
 import com.project.shop.Repositories.UsuarioRepository;
@@ -22,8 +21,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final PasswordEncoder passwordEncoder;
 
+    //crear un usuario
     @Override
-    public UsuarioResponseDTO crear(UsuarioRequestDTO dto) {
+    public UsuarioDTO crear(UsuarioDTO dto) {
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("El email ya está registrado: " + dto.getEmail());
         }
@@ -32,29 +32,33 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioMapper.toUsuarioDto(usuarioRepository.save(usuario));
     }
 
+    //Buscar por id
     @Override
-    public UsuarioResponseDTO buscarPorId(String id) {
-        return usuarioMapper.toUsuarioDto(findOrThrow(id));
+    public UsuarioDTO buscarPorId(String id) {
+        return usuarioMapper.toUsuarioDto(findPorId(id));
     }
 
+    //Buscar por email
     @Override
-    public UsuarioResponseDTO buscarPorEmail(String email) {
+    public UsuarioDTO buscarPorEmail(String email) {
         return usuarioRepository.findByEmail(email)
                 .map(usuarioMapper::toUsuarioDto)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
     }
 
+    //Obtener todos los usuarios
     @Override
-    public List<UsuarioResponseDTO> listarTodos() {
+    public List<UsuarioDTO> listarTodos() {
         return usuarioRepository.findAll()
                 .stream()
                 .map(usuarioMapper::toUsuarioDto)
                 .collect(Collectors.toList());
     }
 
+    //Actualizar
     @Override
-    public UsuarioResponseDTO actualizar(String id, UsuarioRequestDTO dto) {
-        Usuario usuario = findOrThrow(id);
+    public UsuarioDTO actualizar(String id, UsuarioDTO dto) {
+        Usuario usuario = findPorId(id);
         usuario.setNombre(dto.getNombre());
         usuario.setTelefono(dto.getTelefono());
         if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
@@ -66,13 +70,15 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioMapper.toUsuarioDto(usuarioRepository.save(usuario));
     }
 
+    //Eliminar
     @Override
     public void eliminar(String id) {
-        findOrThrow(id);
+        findPorId(id);
         usuarioRepository.deleteById(id);
     }
 
-    private Usuario findOrThrow(String id) {
+    //Funcion para utilizar el metodo de repository evitando repetir la excepcion
+    private Usuario findPorId(String id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
     }
