@@ -1,7 +1,6 @@
 package com.project.shop.security;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +12,6 @@ import com.project.shop.Models.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
@@ -25,8 +23,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    public String generateToken(Usuario usuario) {
+    private Key getSignInKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
 
+    public String generateToken(Usuario usuario) {
         return Jwts.builder()
                 .setSubject(usuario.getEmail())
                 .claim("roles", usuario.getRoles())
@@ -34,6 +35,14 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public String extractUsername(String token) {
@@ -52,23 +61,5 @@ public class JwtService {
         return extractAllClaims(token)
                 .getExpiration()
                 .before(new Date());
-    }
-
-    private Claims extractAllClaims(String token) {
-
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    private Key getSignInKey() {
-
-        byte[] keyBytes = Decoders.BASE64.decode(
-                Base64.getEncoder().encodeToString(secretKey.getBytes())
-        );
-
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
