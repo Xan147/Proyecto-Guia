@@ -47,6 +47,7 @@ public class AuthController {
                         "status", 200,
                         "mensaje", "Login exitoso",
                         "usuario", usuario.getNombre(),
+                        "roles", usuario.getRoles(),
                         "token", jwtToken);
 
         return ResponseEntity.ok(respuesta);
